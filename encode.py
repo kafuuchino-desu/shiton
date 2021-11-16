@@ -23,7 +23,7 @@ if __name__ == "__main__":
     #apply executor
     segment.payload_execute(payload)
 
-    encodeTime = input("please specify encode times(default 1, enter to use default: ")
+    encodeTime = input("please specify encode times(default 1, enter to use default, 0 to disable): ")
     if encodeTime == "":
         encodeTime = 1
     else:
@@ -33,8 +33,9 @@ if __name__ == "__main__":
             print("input error, using default")
             encodeTime = 1
 
-    for i in range(0, encodeTime):
-        payload = b64pack.b64wrap(payload)
+    if encodeTime != 0:
+        for i in range(0, encodeTime):
+            payload = b64pack.b64wrap(payload)
 
     #filePath = input("please specify output file(file path supported)\n")
     filePath = "out.py"
