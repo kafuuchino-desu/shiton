@@ -13,25 +13,32 @@ if __name__ == "__main__":
     except:
         print(traceback.format_exc())
 
+    encodeTime = input("please specify maximum random encode times(default 5, enter to use default, 0 to disable): ")
+    if encodeTime == "":
+        encodeTime = 5
+    else:
+        try:
+            encodeTime = int(encodeTime)
+            if encodeTime < 0:
+                print("negative is not allowed, using default")
+                encodeTime = 5
+        except:
+            print("input error, using default")
+            encodeTime = 5
+
     segs = segment.split_seg(code)
     payload = 'payload = \'\';'
 
     for seg in segs:
-        payload += segment.wrap_seg_b64(seg)
+        if encodeTime == 0:
+            payload += segment.wrap_seg_b64(seg)
+        else:
+            payload += b64pack.multi_b64wrap(segment.wrap_seg_b64(seg), encodeTime)
     payload = segment.payload_execute(payload)
+    #print(payload)
 
     #apply executor
     segment.payload_execute(payload)
-
-    encodeTime = input("please specify encode times(default 1, enter to use default, 0 to disable): ")
-    if encodeTime == "":
-        encodeTime = 1
-    else:
-        try:
-            encodeTime = int(encodeTime)
-        except:
-            print("input error, using default")
-            encodeTime = 1
 
     if encodeTime != 0:
         for i in range(0, encodeTime):
