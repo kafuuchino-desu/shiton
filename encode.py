@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import traceback
-from utils.b64pack import b64obfuscate
-from utils.segment import split_seg 
+import utils.b64pack as b64pack
+import utils.segment as segment
 
 if __name__ == "__main__":
     filePath = input("please input the file name(file path supported)\n")
@@ -12,6 +12,16 @@ if __name__ == "__main__":
             code = handle.read()
     except:
         print(traceback.format_exc())
+
+    segs = segment.split_seg(code)
+    payload = 'payload = \'\';'
+
+    for seg in segs:
+        payload += segment.wrap_seg_b64(seg)
+    payload = segment.payload_execute(payload)
+
+    #apply executor
+    segment.payload_execute(payload)
 
     encodeTime = input("please specify encode times(default 1, enter to use default: ")
     if encodeTime == "":
@@ -24,10 +34,7 @@ if __name__ == "__main__":
             encodeTime = 1
 
     for i in range(0, encodeTime):
-        if (i == 0):
-            payload = b64obfuscate(code)
-        else:
-            payload = b64obfuscate(payload)
+        payload = b64pack.b64wrap(payload)
 
     #filePath = input("please specify output file(file path supported)\n")
     filePath = "out.py"
